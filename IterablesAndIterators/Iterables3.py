@@ -4,7 +4,7 @@
 # By implementing the __iter__ method, our object is an iteraBLE    #
 # By implementing the __iter__ and __next__ methods, our object     #
 # will be an iteraTOR                                               #
-# The __iter__ method must return the iterable object and           #
+# The __iter__ method must return the iterato  object and           #
 # the __next__ method must implement the logic to return object     #
 # when iterated over.                                               #
 #####################################################################
@@ -179,6 +179,10 @@ class Cities:
     def cities(self) -> list[str]:
         return self._cities
 
+    def __getitem__(self, index: int):
+        print("Accessing the sequence by index...")
+        return self._cities[index]
+
     def __iter__(self):
         print("Calling __iter__!")
         return CitiesIterator(self)
@@ -196,6 +200,21 @@ class Cities:
 
 cities = Cities()
 
+print(cities[0])
+# Accessing the sequence by index...
+# Paris
+print(cities[1])
+# Accessing the sequence by index...
+# London
+print(cities[2])
+# Accessing the sequence by index...
+# Mexico City
+
+
+# Python prefers calling the __iter__ method even though
+# there is a __getitem__ method implemented. If no __iter__
+# method is found, then it will look for the __getitem__ one.
+
 for city in cities:
     print(city)
 # Calling __iter__!
@@ -211,3 +230,43 @@ for city in cities:
 # London
 # Mexico City
 # Tokyo
+
+
+class Cities:
+    def __init__(self):
+        self._cities: list[str] = ["Paris", "London", "Mexico City", "Tokyo"]
+        self._index = 0
+
+    def __getitem__(self, index: int):
+        print("Accessing the sequence by index...")
+        return self._cities[index]
+
+    def __len__(self):
+        return len(self._cities)
+
+
+# If no __iter__ method is found, then it will look for the __getitem__ one.
+
+for city in cities:
+    print(city)
+# Accessing the sequence by index...
+# Paris
+# Accessing the sequence by index...
+# London
+# Accessing the sequence by index...
+# Mexico City
+# Accessing the sequence by index...
+# Tokyo
+# Accessing the sequence by index...
+
+for city in cities:
+    print(city)
+# Accessing the sequence by index...
+# Paris
+# Accessing the sequence by index...
+# London
+# Accessing the sequence by index...
+# Mexico City
+# Accessing the sequence by index...
+# Tokyo
+# Accessing the sequence by index...
