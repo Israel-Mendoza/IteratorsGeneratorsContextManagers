@@ -22,6 +22,7 @@ class Cities:
 
     def __iter__(self):
         """Implementing the iterator protocol"""
+        print("Calling __iter__!")
         return self
 
     def __next__(self) -> str:
@@ -36,7 +37,7 @@ cities = Cities()
 
 for city in cities:
     print(city)
-
+# Calling __iter__!
 # Paris
 # London
 # Mexico City
@@ -52,7 +53,7 @@ except StopIteration as ex:
 """Delegating the iterator protocol to another object"""
 
 
-class OtherCities:
+class Cities:
     def __init__(self):
         self._cities: list[str] = ["Paris", "London", "Mexico City", "Tokyo"]
 
@@ -64,12 +65,13 @@ class OtherCities:
         return len(self._cities)
 
 
-class OtherCitiesIterator:
-    def __init__(self, cities_obj: OtherCities):
+class CitiesIterator:
+    def __init__(self, cities_obj: Cities):
         self._cities_obj = cities_obj
         self._index = 0
 
     def __iter__(self):
+        print("Calling __iter__!")
         return self
 
     def __next__(self):
@@ -80,12 +82,13 @@ class OtherCitiesIterator:
         return result
 
 
-cities_iterator = OtherCitiesIterator(OtherCities())
+cities_iterator = CitiesIterator(Cities())
 
 print("Using an iterator: ")
 for city in cities_iterator:
     print(city)
 # Using an iterator:
+# Calling __iter__!
 # Paris
 # London
 # Mexico City
@@ -101,7 +104,7 @@ except StopIteration as ex:
 """Implementing the iterable protocol in the same class"""
 
 
-class CitiesIterator:
+class Cities:
     def __init__(self):
         self._cities: list[str] = ["Paris", "London", "Mexico City", "Tokyo"]
         self._index = 0
@@ -111,8 +114,8 @@ class CitiesIterator:
         return self._cities
 
     def __iter__(self):
-        print("Returning an OtherCitiesIterator object!")
-        return OtherCitiesIterator(self)
+        print("Calling __iter__!")
+        return CitiesIterator(self)
 
     def __next__(self):
         if self._index >= len(self):
@@ -125,13 +128,13 @@ class CitiesIterator:
         return len(self._cities)
 
 
-cities_iterator = CitiesIterator()
+cities_iterator = Cities()
 
 print("Using an iterator: ")
 for city in cities_iterator:
     print(city)
 # Using an iterator:
-# Returning an OtherCitiesIterator object!
+# Calling __iter__!
 # Paris
 # London
 # Mexico City
@@ -141,7 +144,69 @@ print("Using an iterator AGAIN: ")
 for city in cities_iterator:
     print(city)
 # Using an iterator AGAIN:
-# Returning an OtherCitiesIterator object!
+# Calling __iter__!
+# Paris
+# London
+# Mexico City
+# Tokyo
+
+
+"""Implementing the iterable and the iterator in the same class"""
+
+
+class Cities:
+    def __init__(self):
+        self._cities: list[str] = ["Paris", "London", "Mexico City", "Tokyo"]
+        self._index = 0
+
+    class CitiesIterator:
+        def __init__(self, cities_obj: Cities):
+            self._cities_obj = cities_obj
+            self._index = 0
+
+        def __iter__(self):
+            print("Calling __iter__!")
+            return self
+
+        def __next__(self):
+            if self._index >= len(self._cities_obj):
+                raise StopIteration("Cities are up!")
+            result = self._cities_obj.cities[self._index]
+            self._index += 1
+            return result
+
+    @property
+    def cities(self) -> list[str]:
+        return self._cities
+
+    def __iter__(self):
+        print("Calling __iter__!")
+        return CitiesIterator(self)
+
+    def __next__(self):
+        if self._index >= len(self):
+            raise StopIteration("Cities are up!")
+        result = self._cities[self._index]
+        self._index += 1
+        return result
+
+    def __len__(self):
+        return len(self._cities)
+
+
+cities = Cities()
+
+for city in cities:
+    print(city)
+# Calling __iter__!
+# Paris
+# London
+# Mexico City
+# Tokyo
+
+for city in cities:
+    print(city)
+# Calling __iter__!
 # Paris
 # London
 # Mexico City
